@@ -17,12 +17,22 @@ async function run() {
     try {
         //database collections
         const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
+        const usersCollection = client.db('woodpecker12').collection('users');
+
 
         //api to get product categories
         app.get('/productCategories', async (req, res) => {
             const query = {};
             const categories = await productCategoriesCollection.find(query).toArray();
             res.send(categories);
+        });
+
+        //post user data to the users collections
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user);
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
         });
     }
     finally {
