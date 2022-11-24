@@ -15,6 +15,15 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try {
+        //database collections
+        const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
+
+        //api to get product categories
+        app.get('/productCategories', async (req, res) => {
+            const query = {};
+            const categories = await productCategoriesCollection.find(query).toArray();
+            res.send(categories);
+        });
     }
     finally {
     }
