@@ -43,8 +43,8 @@ async function run() {
             res.send(result);
         });
 
-        //get products based on user email
-        app.get('/myprodcuts', async (req, res) => {
+        //api to get products based on user email
+        app.get('/myProducts', async (req, res) => {
             let query = {};
             if (req.query.email) {
                 query = {
