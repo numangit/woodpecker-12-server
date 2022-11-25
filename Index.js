@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -32,6 +32,14 @@ async function run() {
             const query = {}
             const users = await usersCollection.find(query).toArray();
             res.send(users);
+        })
+
+        //api to get user by email
+        app.get('/users', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            res.send(user);
         })
 
         //api to check  user role
@@ -79,16 +87,30 @@ async function run() {
         });
 
         //api to add the advertise field on product
-        app.patch('/reviews/:id', async (req, res) => {
+        app.put('/product/advertise/:id', async (req, res) => {
             const id = req.params.id;
-            const reviewDescription = req.body.reviewDescription
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    advertised: true
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        })
+
+        //api to update the advertise field on product (didnt check if working)
+        app.patch('/product/advertise/:id', async (req, res) => {
+            const id = req.params.id;
+            const advertised = req.body.advertised;
             const query = { _id: ObjectId(id) }
             const updatedDoc = {
                 $set: {
-                    reviewDescription: reviewDescription
+                    advertised: advertised
                 }
             }
-            const result = await reviewCollection.updateOne(query, updatedDoc);
+            const result = await productsCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
 
