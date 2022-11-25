@@ -71,6 +71,14 @@ async function run() {
             res.send(products);
         });
 
+        //api to delete user product
+        app.delete('/myProducts/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productsCollection.deleteOne(query);
+            res.send(result);
+        })
+
         //api get products by category id
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
