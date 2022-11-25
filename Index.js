@@ -43,6 +43,27 @@ async function run() {
             res.send(result);
         });
 
+        //get products based on user email
+        app.get('/myprodcuts', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    sellerEmail: req.query.email
+                }
+            }
+            const cursor = productsCollection.find(query);
+            const products = await cursor.toArray();
+            res.send(products);
+        });
+
+        //api get products by category id
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { productCategory: id };
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
+        })
+
         //api to add products data (REMINDER: VERIFY USER TO BE SELLER USING MIDDLEWARE OR REJECT THE REQUEST)
         app.post('/products', async (req, res) => {
             const product = req.body;
