@@ -27,6 +27,15 @@ async function run() {
             res.send(categories);
         });
 
+        //api to check  user role
+        app.get('/users/role/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email }
+            const user = await usersCollection.findOne(query);
+            console.log(user);
+            res.send(user);
+        })
+
         //post user data to the users collections
         app.post('/users', async (req, res) => {
             const user = req.body;
