@@ -18,7 +18,7 @@ async function run() {
         //database collections
         const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
         const usersCollection = client.db('woodpecker12').collection('users');
-
+        const productsCollection = client.db('woodpecker12').collection('products');
 
         //api to get product categories
         app.get('/productCategories', async (req, res) => {
@@ -32,7 +32,6 @@ async function run() {
             const email = req.params.email;
             const query = { email }
             const user = await usersCollection.findOne(query);
-            console.log(user);
             res.send(user);
         })
 
@@ -43,6 +42,14 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.send(result);
         });
+
+        //api to add products data (REMINDER: VERIFY USER TO BE SELLER USING MIDDLEWARE OR REJECT THE REQUEST)
+        app.post('/products', async (req, res) => {
+            const product = req.body;
+            const result = await productsCollection.insertOne(product);
+            res.send(result);
+        });
+
     }
     finally {
     }
