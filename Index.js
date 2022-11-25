@@ -27,6 +27,13 @@ async function run() {
             res.send(categories);
         });
 
+        //api to get all user
+        app.get('/users', async (req, res) => {
+            const query = {}
+            const users = await usersCollection.find(query).toArray();
+            res.send(users);
+        })
+
         //api to check  user role
         app.get('/users/role/:email', async (req, res) => {
             const email = req.params.email;
@@ -70,6 +77,20 @@ async function run() {
             const result = await productsCollection.insertOne(product);
             res.send(result);
         });
+
+        //api to add the advertise field on product
+        app.patch('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            const reviewDescription = req.body.reviewDescription
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    reviewDescription: reviewDescription
+                }
+            }
+            const result = await reviewCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
 
     }
     finally {
