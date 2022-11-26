@@ -54,10 +54,23 @@ async function run() {
         //post user data to the users collections
         app.post('/users', async (req, res) => {
             const user = req.body;
-            console.log(user);
             const result = await usersCollection.insertOne(user);
             res.send(result);
         });
+
+        //api to add verified field to user
+        app.put('/users/verify/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    verified: true
+                }
+            }
+            const result = await usersCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        })
 
         //api to get all buyers 
         app.get('/allBuyers', async (req, res) => {
