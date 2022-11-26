@@ -159,6 +159,20 @@ async function run() {
             res.send(result);
         })
 
+        //api to add verified field to product seller by email
+        app.put('/products/sellerVerify/:id', async (req, res) => {
+            const email = req.params.id;
+            const query = { sellerEmail: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    sellerVerified: true
+                }
+            }
+            const result = await productsCollection.updateMany(query, updatedDoc, options);
+            res.send(result);
+        })
+
         //api to update the advertise field on product (didnt check if working)
         app.patch('/product/advertise/:id', async (req, res) => {
             const id = req.params.id;
