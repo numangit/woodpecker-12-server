@@ -188,6 +188,19 @@ async function run() {
             res.send(result);
         })
 
+        //api to get Orders based on user email
+        app.get('/myOrders', async (req, res) => {
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    buyerEmail: req.query.email
+                }
+            }
+            const cursor = ordersCollection.find(query);
+            const orders = await cursor.toArray();
+            res.send(orders);
+        });
+
         //api to post orders data
         app.post('/orders', async (req, res) => {
             const product = req.body;
