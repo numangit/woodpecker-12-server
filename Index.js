@@ -79,6 +79,13 @@ async function run() {
             res.send(result);
         })
 
+        //api to get advertised products
+        app.get('/advertisedProducts', async (req, res) => {
+            const query = { advertised: true };
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
+        })
+
         //api get products by category id
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
