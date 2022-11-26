@@ -131,6 +131,13 @@ async function run() {
             res.send(products);
         })
 
+        //api to get reported products
+        app.get('/products/reported', async (req, res) => {
+            const query = { reported: true };
+            const products = await productsCollection.find(query).toArray();
+            res.send(products);
+        })
+
         //api to get products by id
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
