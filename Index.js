@@ -154,6 +154,20 @@ async function run() {
             res.send(result);
         });
 
+        //api to add the reported field on product
+        app.put('/product/report/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    reported: true
+                }
+            }
+            const result = await productsCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        })
+
         //api to add the advertise field on product
         app.put('/product/advertise/:id', async (req, res) => {
             const id = req.params.id;
@@ -183,18 +197,18 @@ async function run() {
         })
 
         //api to update the advertise field on product (didnt check if working)
-        app.patch('/product/advertise/:id', async (req, res) => {
-            const id = req.params.id;
-            const advertised = req.body.advertised;
-            const query = { _id: ObjectId(id) }
-            const updatedDoc = {
-                $set: {
-                    advertised: advertised
-                }
-            }
-            const result = await productsCollection.updateOne(query, updatedDoc);
-            res.send(result);
-        })
+        // app.patch('/product/advertise/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const advertised = req.body.advertised;
+        //     const query = { _id: ObjectId(id) }
+        //     const updatedDoc = {
+        //         $set: {
+        //             advertised: advertised
+        //         }
+        //     }
+        //     const result = await productsCollection.updateOne(query, updatedDoc);
+        //     res.send(result);
+        // })
 
         //api to get Orders based on user email
         app.get('/myOrders', async (req, res) => {
