@@ -34,6 +34,7 @@ async function run() {
             res.send(users);
         })
 
+
         //api to get user by email
         app.get('/users', async (req, res) => {
             const email = req.params.email;
@@ -57,6 +58,21 @@ async function run() {
             const result = await usersCollection.insertOne(user);
             res.send(result);
         });
+
+        //api to get all buyers 
+        app.get('/allBuyers', async (req, res) => {
+            const query = { role: "buyer" };
+            const buyers = await usersCollection.find(query).toArray();
+            res.send(buyers);
+        })
+
+        //api to delete buyer
+        app.delete('/allBuyers/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
 
         //api to get products based on user email
         app.get('/myProducts', async (req, res) => {
