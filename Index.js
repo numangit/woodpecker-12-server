@@ -19,6 +19,7 @@ async function run() {
         const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
         const usersCollection = client.db('woodpecker12').collection('users');
         const productsCollection = client.db('woodpecker12').collection('products');
+        const ordersCollection = client.db('woodpecker12').collection('orders');
 
         //api to get product categories
         app.get('/productCategories', async (req, res) => {
@@ -186,6 +187,13 @@ async function run() {
             const result = await productsCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
+
+        //api to post orders data
+        app.post('/orders', async (req, res) => {
+            const product = req.body;
+            const result = await ordersCollection.insertOne(product);
+            res.send(result);
+        });
 
     }
     finally {
