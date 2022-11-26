@@ -74,6 +74,21 @@ async function run() {
             res.send(result);
         })
 
+        //api to get all buyers 
+        app.get('/allSellers', async (req, res) => {
+            const query = { role: "seller" };
+            const buyers = await usersCollection.find(query).toArray();
+            res.send(buyers);
+        })
+
+        //api to delete buyer
+        app.delete('/allSellers/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
         //api to get products based on user email
         app.get('/myProducts', async (req, res) => {
             let query = {};
