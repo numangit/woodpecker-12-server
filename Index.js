@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 const app = express();
@@ -14,10 +14,10 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.zbie1as.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-//JWT middleware to verify jwt  
+// // JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
-
 //     const authHeader = req.headers.authorization;
+
 //     if (!authHeader) {
 //         return res.status(401).send('unauthorized access');
 //     }
@@ -40,6 +40,13 @@ async function run() {
         const productsCollection = client.db('woodpecker12').collection('products');
         const ordersCollection = client.db('woodpecker12').collection('orders');
 
+        // //api to generate jwt token
+        // app.post('/jwt', (req, res) => {
+        //     const user = req.body;
+        //     const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1d' })
+        //     res.send({ token })
+        // })
+
         //api to get product categories
         app.get('/productCategories', async (req, res) => {
             const query = {};
@@ -47,27 +54,12 @@ async function run() {
             res.send(categories);
         });
 
-        //endpoint to generate jwt (client side will send query)(USE THIS METHOD FOR GOOGLE SIGN IN FOR DATABASE AS WELL)(A 403 – Already Exists error indicates that it is not possible to create a resource with the given definition because another resource already exists with the same attributes. Such errors always correspond with a 403 HTTP status code.)
-        // app.get('/jwt', async (req, res) => {
-        //     const email = req.query.email;
-        //     const query = { email: email };
-
-        //     //jwt will only generate token if the user registered. (since user data will be saved to database while registering hence we can check from there if user email exist)
-        //     const user = await usersCollection.findOne(query);
-        //     if (user) {
-        //         const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
-        //         return res.send({ accessToken: token });
-        //     }
-        //     res.status(403).send({ accessToken: '' })
-        // });
-
         //api to get all user
         app.get('/users', async (req, res) => {
             const query = {}
             const users = await usersCollection.find(query).toArray();
             res.send(users);
         })
-
 
         //api to get user by email
         app.get('/users', async (req, res) => {
@@ -85,13 +77,6 @@ async function run() {
             res.send(user);
         })
 
-        //post user data to the users collections
-        // app.post('/users', async (req, res) => {
-        //     const user = req.body;
-        //     const result = await usersCollection.insertOne(user);
-        //     res.send(result);
-        // });
-
         //post user data to the users collections and if user exist then send status 403
         app.post('/users', async (req, res) => {
             const email = req.body.email;
@@ -102,7 +87,7 @@ async function run() {
                 const result = await usersCollection.insertOne(user);
                 res.send(result);
             }
-            res.status(403).send({ message: 'user already exists' })
+            res.status(403).send({ message: 'User already exists' })
         });
 
         //api to add verified field to user
@@ -249,8 +234,12 @@ async function run() {
             res.send(result);
         })
 
-        //api to get Orders based on user email
+        //api to get Orders based on user email (NEEDS VERIFICATION JWT)
         app.get('/myOrders', async (req, res) => {
+            // const decoded = req.decoded;
+            // if (decoded.email !== req.query.email) {
+            //     res.send({ message: 'unauthorized access' })
+            // }
             let query = {};
             if (req.query.email) {
                 query = {
@@ -261,6 +250,14 @@ async function run() {
             const orders = await cursor.toArray();
             res.send(orders);
         });
+
+        //api to get orders by order id
+        app.get('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const order = await ordersCollection.findOne(query);
+            res.send(order);
+        })
 
         //api to post orders data
         app.post('/orders', async (req, res) => {
