@@ -40,6 +40,7 @@ async function run() {
         const usersCollection = client.db('woodpecker12').collection('users');
         const productsCollection = client.db('woodpecker12').collection('products');
         const ordersCollection = client.db('woodpecker12').collection('orders');
+        const paymentsCollection = client.db('woodpecker12').collection('payments');
 
         //middle ware to verify seller
         const verifySeller = async (req, res, next) => {
@@ -73,17 +74,31 @@ async function run() {
 
         //api to store the purchase data in collection
         app.post('/payments', async (req, res) => {
+            //insert purchase data
             const payment = req.body;
             const result = await paymentsCollection.insertOne(payment);
-            const id = payment.bookingId
-            const filter = { _id: ObjectId(id) }
+            //update order data
+            const orderId = payment.orderId
+            const filter = { _id: ObjectId(orderId) }
             const updatedDoc = {
                 $set: {
                     paid: true,
                     transactionId: payment.transactionId
                 }
             }
-            const updatedResult = await bookingsCollection.updateOne(filter, updatedDoc)
+            const updatedResult = await ordersCollection.updateOne(filter, updatedDoc)
+            //update product data
+            const productId = payment.productId
+            const query = { _id: ObjectId(productId) };
+            const options = { upsert: true };
+            const updatedProductField = {
+                $set: {
+                    paid: true,
+                    onStock: false,
+                    advertised: false
+                }
+            }
+            const updatedProduct = await productsCollection.updateOne(query, updatedProductField, options)
             res.send(result);
         })
 
@@ -281,7 +296,7 @@ async function run() {
             res.send(result);
         })
 
-        //api to get Orders based on user email (NEEDS VERIFICATION JWT)
+        //api to get Orders based on user email 
         app.get('/myOrders', verifyJWT, async (req, res) => {
             const decoded = req.decoded;
             if (decoded.email !== req.query.email) {
