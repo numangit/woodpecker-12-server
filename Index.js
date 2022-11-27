@@ -198,7 +198,7 @@ async function run() {
         })
 
         //api to add products data 
-        app.post('/products', verifySeller, async (req, res) => {
+        app.post('/products', verifyJWT, verifySeller, async (req, res) => {
             const product = req.body;
             const result = await productsCollection.insertOne(product);
             res.send(result);
@@ -219,7 +219,7 @@ async function run() {
         })
 
         //api to add the advertise field on product
-        app.put('/product/advertise/:id', async (req, res) => {
+        app.put('/product/advertise/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const options = { upsert: true };
