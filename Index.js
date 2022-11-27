@@ -103,7 +103,7 @@ async function run() {
         });
 
         //api to add verified field to user
-        app.put('/users/verify/:id', async (req, res) => {
+        app.put('/users/verify/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const options = { upsert: true };
@@ -117,7 +117,7 @@ async function run() {
         })
 
         //api to get all buyers 
-        app.get('/allBuyers', async (req, res) => {
+        app.get('/allBuyers', verifyJWT, async (req, res) => {
             const query = { role: "buyer" };
             const buyers = await usersCollection.find(query).toArray();
             res.send(buyers);
