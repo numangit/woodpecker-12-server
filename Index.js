@@ -243,6 +243,7 @@ async function run() {
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
             const query = { productCategory: id };
+            // const query = { $and: [{ productCategory: { $exist: id } }, { onStock: { $exist: true } }] };
             const products = await productsCollection.find(query).toArray();
             res.send(products);
         })
