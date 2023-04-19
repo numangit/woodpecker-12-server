@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb');
 const express = require("express");
 const route = express.Router();
-const {paymentsCollection} = require('../collections/dbCollections');
+const {paymentsCollection, ordersCollection, productsCollection} = require('../collections/dbCollections');
 
 //api to store the purchase data in collection
 route.post('/', async (req, res) => {
@@ -19,7 +19,7 @@ route.post('/', async (req, res) => {
             transactionId: payment.transactionId
         }
     };
-    const updatedResult = await ordersCollection.updateOne(filter, updatedDoc);
+    const updatedOrder = await ordersCollection.updateOne(filter, updatedDoc);
 
     //update product data
     const productId = payment.productId
