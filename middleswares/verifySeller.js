@@ -1,5 +1,7 @@
-   //middle ware to verify seller
-   const verifySeller = async (req, res, next) => {
+const {usersCollection} = require('../collections/dbCollections');
+
+//middle ware to verify seller
+const verifySeller = async (req, res, next) => {
     
     const decodedEmail = req.decoded.email;
     const query = { email: decodedEmail };

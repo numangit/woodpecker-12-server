@@ -6,13 +6,13 @@ require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 const app = express();
-const {client} = require('./database/mongodb.config');
+// const {client} = require('./database/mongodb.config');
 
 //middleware
 app.use(cors());
 app.use(express.json());
-const verifyJWT = require('./middleswares/verifyJWT');
-const verifySeller = require('./middleswares/verifySeller');
+// const verifyJWT = require('./middleswares/verifyJWT');
+// const verifySeller = require('./middleswares/verifySeller');
 
 //import api routes
 const users = require('./routes/users'); 
@@ -20,6 +20,7 @@ const categories = require('./routes/productCategories');
 const orders = require('./routes/orders');
 const products = require('./routes/products');
 const jwt = require('./routes/jwt');
+const payments = require('./routes/payments');
 
 //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -43,7 +44,7 @@ async function run() {
     try {
         //database collections
         // const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
-        const usersCollection = client.db('woodpecker12').collection('users');
+        // const usersCollection = client.db('woodpecker12').collection('users');
         // const productsCollection = client.db('woodpecker12').collection('products');
         // const ordersCollection = client.db('woodpecker12').collection('orders');
         // const paymentsCollection = client.db('woodpecker12').collection('payments');
@@ -78,35 +79,39 @@ async function run() {
             });
         });
 
-        //api to store the purchase data in collection
-        app.post('/payments', async (req, res) => {
-            //insert purchase data
-            const payment = req.body;
-            const result = await paymentsCollection.insertOne(payment);
-            //update order data
-            const orderId = payment.orderId
-            const filter = { _id: ObjectId(orderId) }
-            const updatedDoc = {
-                $set: {
-                    paid: true,
-                    transactionId: payment.transactionId
-                }
-            }
-            const updatedResult = await ordersCollection.updateOne(filter, updatedDoc)
-            //update product data
-            const productId = payment.productId
-            const query = { _id: ObjectId(productId) };
-            const options = { upsert: true };
-            const updatedProductField = {
-                $set: {
-                    paid: true,
-                    onStock: false,
-                    advertised: false
-                }
-            }
-            const updatedProduct = await productsCollection.updateOne(query, updatedProductField, options)
-            res.send(result);
-        })
+ /*
+        ----------------- payment invoice API ----------------------
+        */
+        app.use('/payments', payments);
+        // //api to store the purchase data in collection
+        // app.post('/payments', async (req, res) => {
+        //     //insert purchase data
+        //     const payment = req.body;
+        //     const result = await paymentsCollection.insertOne(payment);
+        //     //update order data
+        //     const orderId = payment.orderId
+        //     const filter = { _id: ObjectId(orderId) }
+        //     const updatedDoc = {
+        //         $set: {
+        //             paid: true,
+        //             transactionId: payment.transactionId
+        //         }
+        //     }
+        //     const updatedResult = await ordersCollection.updateOne(filter, updatedDoc)
+        //     //update product data
+        //     const productId = payment.productId
+        //     const query = { _id: ObjectId(productId) };
+        //     const options = { upsert: true };
+        //     const updatedProductField = {
+        //         $set: {
+        //             paid: true,
+        //             onStock: false,
+        //             advertised: false
+        //         }
+        //     }
+        //     const updatedProduct = await productsCollection.updateOne(query, updatedProductField, options)
+        //     res.send(result);
+        // })
 
         /*
         ----------------- JWT API ----------------------
@@ -189,34 +194,34 @@ async function run() {
         // })
 
         //api to get all buyers 
-        app.get('/allBuyers', verifyJWT, async (req, res) => {
-            const query = { role: "buyer" };
-            const buyers = await usersCollection.find(query).toArray();
-            res.send(buyers);
-        })
+        // app.get('/allBuyers', verifyJWT, async (req, res) => {
+        //     const query = { role: "buyer" };
+        //     const buyers = await usersCollection.find(query).toArray();
+        //     res.send(buyers);
+        // })
 
-        //api to delete buyer
-        app.delete('/allBuyers/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await usersCollection.deleteOne(query);
-            res.send(result);
-        })
+        // //api to delete buyer
+        // app.delete('/allBuyers/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const result = await usersCollection.deleteOne(query);
+        //     res.send(result);
+        // })
 
-        //api to get all buyers 
-        app.get('/allSellers', async (req, res) => {
-            const query = { role: "seller" };
-            const buyers = await usersCollection.find(query).toArray();
-            res.send(buyers);
-        })
+        // //api to get all buyers 
+        // app.get('/allSellers', async (req, res) => {
+        //     const query = { role: "seller" };
+        //     const buyers = await usersCollection.find(query).toArray();
+        //     res.send(buyers);
+        // })
 
-        //api to delete buyer
-        app.delete('/allSellers/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await usersCollection.deleteOne(query);
-            res.send(result);
-        })
+        // //api to delete buyer
+        // app.delete('/allSellers/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const result = await usersCollection.deleteOne(query);
+        //     res.send(result);
+        // })
 
         /*
         ----------------- PRODUCTS API ----------------------
