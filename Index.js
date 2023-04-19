@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { ObjectId } = require('mongodb');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
@@ -19,6 +19,7 @@ const users = require('./routes/users');
 const categories = require('./routes/productCategories');
 const orders = require('./routes/orders');
 const products = require('./routes/products');
+const jwt = require('./routes/jwt');
 
 //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -41,11 +42,11 @@ const products = require('./routes/products');
 async function run() {
     try {
         //database collections
-        const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
+        // const productCategoriesCollection = client.db('woodpecker12').collection('productCategories');
         const usersCollection = client.db('woodpecker12').collection('users');
-        const productsCollection = client.db('woodpecker12').collection('products');
-        const ordersCollection = client.db('woodpecker12').collection('orders');
-        const paymentsCollection = client.db('woodpecker12').collection('payments');
+        // const productsCollection = client.db('woodpecker12').collection('products');
+        // const ordersCollection = client.db('woodpecker12').collection('orders');
+        // const paymentsCollection = client.db('woodpecker12').collection('payments');
 
         // //middle ware to verify seller
         // const verifySeller = async (req, res, next) => {
@@ -107,12 +108,21 @@ async function run() {
             res.send(result);
         })
 
-        // //api to generate jwt token
-        app.post('/jwt', (req, res) => {
-            const user = req.body;
-            const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1d' })
-            res.send({ token })
-        })
+        /*
+        ----------------- JWT API ----------------------
+        */
+
+        app.use('/jwt', jwt);
+        //api to generate jwt token
+        // app.post('/jwt', (req, res) => {
+        //     const user = req.body;
+        //     const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1d' })
+        //     res.send({ token })
+        // })
+
+        /*
+        ----------------- CATEGORY API ----------------------
+        */
 
         app.use('/productCategories', categories);
         // //api to get product categories
