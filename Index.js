@@ -11,31 +11,32 @@ const {client} = require('./database/mongodb.config');
 //middleware
 app.use(cors());
 app.use(express.json());
-// const verifyJWT = require('./middleswares/verifyJWT');
+const verifyJWT = require('./middleswares/verifyJWT');
 const verifySeller = require('./middleswares/verifySeller');
 
 //import api routes
 const users = require('./routes/users'); 
 const categories = require('./routes/productCategories');
 const orders = require('./routes/orders');
+const products = require('./routes/products');
 
 //JWT middleware to verify jwt  
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization;
+// function verifyJWT(req, res, next) {
+//     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-        return res.status(401).send('unauthorized access');
-    }
+//     if (!authHeader) {
+//         return res.status(401).send('unauthorized access');
+//     }
 
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-        if (err) {
-            return res.status(403).send({ message: 'forbidden access' })
-        }
-        req.decoded = decoded;
-        next();
-    })
-}
+//     const token = authHeader.split(' ')[1];
+//     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+//         if (err) {
+//             return res.status(403).send({ message: 'forbidden access' })
+//         }
+//         req.decoded = decoded;
+//         next();
+//     })
+// }
 
 async function run() {
     try {
@@ -210,107 +211,108 @@ async function run() {
         /*
         ----------------- PRODUCTS API ----------------------
         */
+        app.use('/products',products);
 
-        //api to get products based on user email
-        app.get('/myProducts', async (req, res) => {
-            let query = {};
-            if (req.query.email) {
-                query = {
-                    sellerEmail: req.query.email
-                }
-            }
-            const cursor = productsCollection.find(query);
-            const products = await cursor.toArray();
-            res.send(products);
-        });
+        // //api to get products based on user email
+        // app.get('/myProducts', async (req, res) => {
+        //     let query = {};
+        //     if (req.query.email) {
+        //         query = {
+        //             sellerEmail: req.query.email
+        //         }
+        //     }
+        //     const cursor = productsCollection.find(query);
+        //     const products = await cursor.toArray();
+        //     res.send(products);
+        // });
 
-        //api to delete product
-        app.delete('/products/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await productsCollection.deleteOne(query);
-            res.send(result);
-        })
+        // //api to delete product
+        // app.delete('/products/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const result = await productsCollection.deleteOne(query);
+        //     res.send(result);
+        // })
 
-        //api to get advertised products
-        app.get('/advertisedProducts', async (req, res) => {
-            const query = { advertised: true };
-            const products = await productsCollection.find(query).toArray();
-            res.send(products);
-        })
+        // //api to get advertised products
+        // app.get('/advertisedProducts', async (req, res) => {
+        //     const query = { advertised: true };
+        //     const products = await productsCollection.find(query).toArray();
+        //     res.send(products);
+        // })
 
-        //api to get reported products
-        app.get('/products/reported', async (req, res) => {
-            const query = { reported: true };
-            const products = await productsCollection.find(query).toArray();
-            res.send(products);
-        })
+        // //api to get reported products
+        // app.get('/products/reported', async (req, res) => {
+        //     const query = { reported: true };
+        //     const products = await productsCollection.find(query).toArray();
+        //     res.send(products);
+        // })
 
-        //api to get products by id
-        app.get('/products/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { productCategory: id };
-            const products = await productsCollection.find(query).toArray();
-            res.send(products);
-        })
+        // //api to get products by id
+        // app.get('/products/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { productCategory: id };
+        //     const products = await productsCollection.find(query).toArray();
+        //     res.send(products);
+        // })
 
-        //api get products by category id
-        app.get('/products/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { productCategory: id };
-            // const query = { $and: [{ productCategory: { $exist: id } }, { onStock: { $exist: true } }] };
-            const products = await productsCollection.find(query).toArray();
-            res.send(products);
-        })
+        // //api get products by category id
+        // app.get('/products/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { productCategory: id };
+        //     // const query = { $and: [{ productCategory: { $exist: id } }, { onStock: { $exist: true } }] };
+        //     const products = await productsCollection.find(query).toArray();
+        //     res.send(products);
+        // })
 
-        //api to add products data 
-        app.post('/products', verifyJWT, verifySeller, async (req, res) => {
-            const product = req.body;
-            const result = await productsCollection.insertOne(product);
-            res.send(result);
-        });
+        // //api to add products data 
+        // app.post('/products', verifyJWT, verifySeller, async (req, res) => {
+        //     const product = req.body;
+        //     const result = await productsCollection.insertOne(product);
+        //     res.send(result);
+        // });
 
-        //api to add the reported field on product
-        app.put('/product/report/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    reported: true
-                }
-            }
-            const result = await productsCollection.updateOne(query, updatedDoc, options);
-            res.send(result);
-        })
+        // //api to add the reported field on product
+        // app.put('/product/report/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             reported: true
+        //         }
+        //     }
+        //     const result = await productsCollection.updateOne(query, updatedDoc, options);
+        //     res.send(result);
+        // })
 
-        //api to add the advertise field on product
-        app.put('/product/advertise/:id', verifyJWT, async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    advertised: true
-                }
-            }
-            const result = await productsCollection.updateOne(query, updatedDoc, options);
-            res.send(result);
-        })
+        // //api to add the advertise field on product
+        // app.put('/product/advertise/:id', verifyJWT, async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             advertised: true
+        //         }
+        //     }
+        //     const result = await productsCollection.updateOne(query, updatedDoc, options);
+        //     res.send(result);
+        // })
 
-        //api to add verified field to product seller by email
-        app.put('/products/sellerVerify/:id', async (req, res) => {
-            const email = req.params.id;
-            const query = { sellerEmail: email };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    sellerVerified: true
-                }
-            }
-            const result = await productsCollection.updateMany(query, updatedDoc, options);
-            res.send(result);
-        })
+        // //api to add verified field to product seller by email
+        // app.put('/products/sellerVerify/:id', async (req, res) => {
+        //     const email = req.params.id;
+        //     const query = { sellerEmail: email };
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             sellerVerified: true
+        //         }
+        //     }
+        //     const result = await productsCollection.updateMany(query, updatedDoc, options);
+        //     res.send(result);
+        // })
 
         /*
         ----------------- ORDERS API ----------------------
