@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const { ObjectId } = require('mongodb');
+// const { ObjectId } = require('mongodb');
 // const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 const app = express();
 // const {client} = require('./database/mongodb.config');
@@ -21,6 +21,7 @@ const orders = require('./routes/orders');
 const products = require('./routes/products');
 const jwt = require('./routes/jwt');
 const payments = require('./routes/payments');
+const strip = require('./routes/strip');
 
 //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -61,25 +62,29 @@ async function run() {
         //     next();
         // }
 
-        //Payment gateway intents API
-        app.post('/create-payment-intent', async (req, res) => {
-            const order = req.body;
-            const price = order.productPrice;
-            const amount = price * 100;
+        /*
+        ----------------- strip intent API ----------------------
+        */
+        app.use('/create-payment-intent', strip);
+        // //Payment gateway intents API
+        // app.post('/create-payment-intent', async (req, res) => {
+        //     const order = req.body;
+        //     const price = order.productPrice;
+        //     const amount = price * 100;
 
-            const paymentIntent = await stripe.paymentIntents.create({
-                currency: 'usd',
-                amount: amount,
-                "payment_method_types": [
-                    "card"
-                ]
-            });
-            res.send({
-                clientSecret: paymentIntent.client_secret,
-            });
-        });
+        //     const paymentIntent = await stripe.paymentIntents.create({
+        //         currency: 'usd',
+        //         amount: amount,
+        //         "payment_method_types": [
+        //             "card"
+        //         ]
+        //     });
+        //     res.send({
+        //         clientSecret: paymentIntent.client_secret,
+        //     });
+        // });
 
- /*
+        /*
         ----------------- payment invoice API ----------------------
         */
         app.use('/payments', payments);
