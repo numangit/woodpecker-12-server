@@ -7,7 +7,6 @@ const {productsCollection} = require('../collections/dbCollections');
 
 //api to get products based on user email
 route.get('/user', async (req, res) => {
-// route.get('/myProducts', async (req, res) => { //fixed
     let query = {};
     if (req.query.email) {
         query = {
@@ -21,7 +20,6 @@ route.get('/user', async (req, res) => {
 
 //api to get advertised products
 route.get('/advertised', async (req, res) => {
-// route.get('/advertisedProducts', async (req, res) => { //FIXED
     const query = { advertised: true };
     const products = await productsCollection.find(query).toArray();
     res.send(products);
@@ -42,15 +40,6 @@ route.get('/:id', async (req, res) => {
     res.send(products);
 });
 
-//api get products by category id
-// route.get('/products/:id', async (req, res) => {
-//     const id = req.params.id;
-//     const query = { productCategory: id };
-//     // const query = { $and: [{ productCategory: { $exist: id } }, { onStock: { $exist: true } }] };
-//     const products = await productsCollection.find(query).toArray();
-//     res.send(products);
-// })
-
 //api to add products data 
 route.post('/', verifyJWT, verifySeller, async (req, res) => {
     const product = req.body;
@@ -60,7 +49,6 @@ route.post('/', verifyJWT, verifySeller, async (req, res) => {
 
 //api to add the reported field on product
 route.put('/reported/:id', async (req, res) => {
-// route.put('/product/report/:id', async (req, res) => {//fixed
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const options = { upsert: true };
@@ -75,7 +63,6 @@ route.put('/reported/:id', async (req, res) => {
 
 //api to add the advertise field on product
 route.put('/advertised/:id', verifyJWT, async (req, res) => {
-// route.put('/product/advertise/:id', verifyJWT, async (req, res) => { //fixed
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const options = { upsert: true };

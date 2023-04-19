@@ -23,7 +23,6 @@ route.get('/', async (req, res) => {
 
 //api to get all buyers 
 route.get('/buyers', verifyJWT, async (req, res) => {
-    // route.get('/allBuyers', verifyJWT, async (req, res) => {
     const query = { role: "buyer" };
     const buyers = await usersCollection.find(query).toArray();
     res.send(buyers);
@@ -31,7 +30,6 @@ route.get('/buyers', verifyJWT, async (req, res) => {
 
 //api to get all buyers 
 route.get('/sellers', async (req, res) => {
-    // route.get('/allSellers', async (req, res) => {
     const query = { role: "seller" };
     const buyers = await usersCollection.find(query).toArray();
     res.send(buyers);
@@ -74,7 +72,6 @@ route.put('/verify/:id', verifyJWT, async (req, res) => {
 
 //api to delete buyer
 route.delete('/buyers/:id', async (req, res) => {
-// route.delete('/allBuyers/:id', async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const result = await usersCollection.deleteOne(query);
@@ -83,7 +80,6 @@ route.delete('/buyers/:id', async (req, res) => {
 
 //api to delete buyer
 route.delete('/sellers/:id', async (req, res) => {
-// route.delete('/allSellers/:id', async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const result = await usersCollection.deleteOne(query);
