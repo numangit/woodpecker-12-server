@@ -1,4 +1,4 @@
- const client = require('../database/mongodb.config');
+ const {client} = require('../database/mongodb.config');
  
  //database collections
  const ordersCollection = client.db('woodpecker12').collection('orders');

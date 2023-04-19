@@ -6,6 +6,7 @@ require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 const app = express();
+const client = require('./database/mongodb.config');
 
 //middleware
 app.use(cors());
