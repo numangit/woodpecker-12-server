@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 //JWT middleware to verify jwt  
 function verifyJWT(req, res, next) {
 

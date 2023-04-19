@@ -11,7 +11,7 @@ const {client} = require('./database/mongodb.config');
 //middleware
 app.use(cors());
 app.use(express.json());
-const verifyJWT = require('./middleswares/verifyJWT');
+// const verifyJWT = require('./middleswares/verifyJWT');
 const verifySeller = require('./middleswares/verifySeller');
 
 //import api routes
@@ -19,23 +19,23 @@ const users = require('./routes/users');
 const categories = require('./routes/productCategories');
 const orders = require('./routes/orders');
 
-// //JWT middleware to verify jwt  
-// function verifyJWT(req, res, next) {
-//     const authHeader = req.headers.authorization;
+//JWT middleware to verify jwt  
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
 
-//     if (!authHeader) {
-//         return res.status(401).send('unauthorized access');
-//     }
+    if (!authHeader) {
+        return res.status(401).send('unauthorized access');
+    }
 
-//     const token = authHeader.split(' ')[1];
-//     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-//         if (err) {
-//             return res.status(403).send({ message: 'forbidden access' })
-//         }
-//         req.decoded = decoded;
-//         next();
-//     })
-// }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
+        if (err) {
+            return res.status(403).send({ message: 'forbidden access' })
+        }
+        req.decoded = decoded;
+        next();
+    })
+}
 
 async function run() {
     try {
