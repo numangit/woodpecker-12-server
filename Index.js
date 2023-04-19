@@ -16,6 +16,7 @@ const verifySeller = require('./middleswares/verifySeller');
 
 //import api routes
 const users = require('./routes/users'); 
+const categories = require('./routes/productCategories');
 
 // //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -111,12 +112,13 @@ async function run() {
             res.send({ token })
         })
 
-        //api to get product categories
-        app.get('/productCategories', async (req, res) => {
-            const query = {};
-            const categories = await productCategoriesCollection.find(query).toArray();
-            res.send(categories);
-        });
+        app.use('/productCategories', categories);
+        // //api to get product categories
+        // app.get('/productCategories', async (req, res) => {
+        //     const query = {};
+        //     const categories = await productCategoriesCollection.find(query).toArray();
+        //     res.send(categories);
+        // });
 
         /*
         ----------------- USER API ----------------------

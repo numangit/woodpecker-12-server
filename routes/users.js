@@ -3,6 +3,9 @@ const express = require("express");
 const route = express.Router();
 const verifyJWT = require('../middleswares/verifyJWT');
 
+// user collection
+const {usersCollection} = require('../collections/dbCollections');
+
 //api to get all user
 route.get('/', async (req, res) => {
     const query = {};
