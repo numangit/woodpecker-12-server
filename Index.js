@@ -17,6 +17,7 @@ const verifySeller = require('./middleswares/verifySeller');
 //import api routes
 const users = require('./routes/users'); 
 const categories = require('./routes/productCategories');
+const orders = require('./routes/orders');
 
 // //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -314,38 +315,40 @@ async function run() {
         /*
         ----------------- ORDERS API ----------------------
         */
+        app.use('/orders', orders);
 
-        //api to get Orders based on user email 
-        app.get('/myOrders', verifyJWT, async (req, res) => {
-            const decoded = req.decoded;
-            if (decoded.email !== req.query.email) {
-                res.send({ message: 'unauthorized access' })
-            }
-            let query = {};
-            if (req.query.email) {
-                query = {
-                    buyerEmail: req.query.email
-                }
-            }
-            const cursor = ordersCollection.find(query);
-            const orders = await cursor.toArray();
-            res.send(orders);
-        });
 
-        //api to get orders by order id
-        app.get('/orders/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const order = await ordersCollection.findOne(query);
-            res.send(order);
-        })
+        // //api to get Orders based on user email 
+        // app.get('/myOrders', verifyJWT, async (req, res) => {
+        //     const decoded = req.decoded;
+        //     if (decoded.email !== req.query.email) {
+        //         res.send({ message: 'unauthorized access' })
+        //     }
+        //     let query = {};
+        //     if (req.query.email) {
+        //         query = {
+        //             buyerEmail: req.query.email
+        //         }
+        //     }
+        //     const cursor = ordersCollection.find(query);
+        //     const orders = await cursor.toArray();
+        //     res.send(orders);
+        // });
 
-        //api to post orders data
-        app.post('/orders', async (req, res) => {
-            const product = req.body;
-            const result = await ordersCollection.insertOne(product);
-            res.send(result);
-        });
+        // //api to get orders by order id
+        // app.get('/orders/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const order = await ordersCollection.findOne(query);
+        //     res.send(order);
+        // })
+
+        // //api to post orders data
+        // app.post('/orders', async (req, res) => {
+        //     const product = req.body;
+        //     const result = await ordersCollection.insertOne(product);
+        //     res.send(result);
+        // });
 
     }
     finally {
