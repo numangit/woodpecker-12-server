@@ -4,7 +4,7 @@ const route = express.Router();
 const {paymentsCollection} = require('../collections/dbCollections');
 
 //api to store the purchase data in collection
-route.post('/payments', async (req, res) => {
+route.post('/', async (req, res) => {
 
     //insert purchase data
     const payment = req.body;
