@@ -27,7 +27,7 @@ route.get('/role/:email', async (req, res) => {
 });        
 
 //post user data to the users collections and if user exist then send status 403
-route.post('', async (req, res) => {
+route.post('/', async (req, res) => {
     const email = req.body.email;
     const query = { email: email };
     const user = await usersCollection.findOne(query);
