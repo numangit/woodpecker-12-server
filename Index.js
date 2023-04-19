@@ -7,11 +7,12 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 const app = express();
 const {client} = require('./database/mongodb.config');
-const verifyJWT = require('./middlewares/verifyJWT');
 
 //middleware
 app.use(cors());
 app.use(express.json());
+const verifyJWT = require('./middleswares/verifyJWT');
+const verifySeller = require('./middleswares/verifySeller');
 
 // //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
@@ -40,17 +41,17 @@ async function run() {
         const ordersCollection = client.db('woodpecker12').collection('orders');
         const paymentsCollection = client.db('woodpecker12').collection('payments');
 
-        //middle ware to verify seller
-        const verifySeller = async (req, res, next) => {
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail };
-            const user = await usersCollection.findOne(query);
+        // //middle ware to verify seller
+        // const verifySeller = async (req, res, next) => {
+        //     const decodedEmail = req.decoded.email;
+        //     const query = { email: decodedEmail };
+        //     const user = await usersCollection.findOne(query);
 
-            if (user?.role !== 'seller') {
-                return res.status(403).send({ message: 'forbidden access' })
-            }
-            next();
-        }
+        //     if (user?.role !== 'seller') {
+        //         return res.status(403).send({ message: 'forbidden access' })
+        //     }
+        //     next();
+        // }
 
         //Payment gateway intents API
         app.post('/create-payment-intent', async (req, res) => {
