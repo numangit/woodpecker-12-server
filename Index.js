@@ -115,55 +115,59 @@ async function run() {
             res.send(categories);
         });
 
-        //api to get all user
-        app.get('/users', async (req, res) => {
-            const query = {}
-            const users = await usersCollection.find(query).toArray();
-            res.send(users);
-        })
+        /*
+        ----------------- USER API ----------------------
+        */
 
-        //api to get user by email
-        app.get('/users', async (req, res) => {
-            const email = req.params.email;
-            const query = { email }
-            const user = await usersCollection.findOne(query);
-            res.send(user);
-        })
+        // //api to get all user
+        // app.get('/users', async (req, res) => {
+        //     const query = {}
+        //     const users = await usersCollection.find(query).toArray();
+        //     res.send(users);
+        // })
 
-        //api to check  user role
-        app.get('/users/role/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email }
-            const user = await usersCollection.findOne(query);
-            res.send(user);
-        })
+        // //api to get user by email
+        // app.get('/users', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { email }
+        //     const user = await usersCollection.findOne(query);
+        //     res.send(user);
+        // })
 
-        //post user data to the users collections and if user exist then send status 403
-        app.post('/users', async (req, res) => {
-            const email = req.body.email;
-            const query = { email: email };
-            const user = await usersCollection.findOne(query);
-            if (!user) {
-                const user = req.body;
-                const result = await usersCollection.insertOne(user);
-                return res.send(result);
-            }
-            res.status(403).send({ message: 'User already exists' })
-        });
+        // //api to check  user role
+        // app.get('/users/role/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { email }
+        //     const user = await usersCollection.findOne(query);
+        //     res.send(user);
+        // })
 
-        //api to add verified field to user
-        app.put('/users/verify/:id', verifyJWT, async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    verified: true
-                }
-            }
-            const result = await usersCollection.updateOne(query, updatedDoc, options);
-            res.send(result);
-        })
+        // //post user data to the users collections and if user exist then send status 403
+        // app.post('/users', async (req, res) => {
+        //     const email = req.body.email;
+        //     const query = { email: email };
+        //     const user = await usersCollection.findOne(query);
+        //     if (!user) {
+        //         const user = req.body;
+        //         const result = await usersCollection.insertOne(user);
+        //         return res.send(result);
+        //     }
+        //     res.status(403).send({ message: 'User already exists' })
+        // });
+
+        // //api to add verified field to user
+        // app.put('/users/verify/:id', verifyJWT, async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = { _id: ObjectId(id) };
+        //     const options = { upsert: true };
+        //     const updatedDoc = {
+        //         $set: {
+        //             verified: true
+        //         }
+        //     }
+        //     const result = await usersCollection.updateOne(query, updatedDoc, options);
+        //     res.send(result);
+        // })
 
         //api to get all buyers 
         app.get('/allBuyers', verifyJWT, async (req, res) => {
@@ -194,6 +198,10 @@ async function run() {
             const result = await usersCollection.deleteOne(query);
             res.send(result);
         })
+
+        /*
+        ----------------- PRODUCTS API ----------------------
+        */
 
         //api to get products based on user email
         app.get('/myProducts', async (req, res) => {
@@ -295,6 +303,10 @@ async function run() {
             const result = await productsCollection.updateMany(query, updatedDoc, options);
             res.send(result);
         })
+
+        /*
+        ----------------- ORDERS API ----------------------
+        */
 
         //api to get Orders based on user email 
         app.get('/myOrders', verifyJWT, async (req, res) => {
