@@ -1,16 +1,17 @@
 const { ObjectId } = require('mongodb');
 const express = require("express");
 const route = express.Router();
+const verifyJWT = require('../middleswares/verifyJWT');
 
 //api to get all user
-route.get('/users', async (req, res) => {
+route.get('/', async (req, res) => {
     const query = {};
     const users = await usersCollection.find(query).toArray();
     res.send(users);
 });
 
 //api to get user by email
-route.get('/users', async (req, res) => {
+route.get('/', async (req, res) => {
     const email = req.params.email;
     const query = { email };
     const user = await usersCollection.findOne(query);
@@ -18,7 +19,7 @@ route.get('/users', async (req, res) => {
 });
 
 //api to check  user role
-route.get('/users/role/:email', async (req, res) => {
+route.get('/role/:email', async (req, res) => {
     const email = req.params.email;
     const query = { email };
     const user = await usersCollection.findOne(query);
@@ -26,7 +27,7 @@ route.get('/users/role/:email', async (req, res) => {
 });        
 
 //post user data to the users collections and if user exist then send status 403
-route.post('/users', async (req, res) => {
+route.post('', async (req, res) => {
     const email = req.body.email;
     const query = { email: email };
     const user = await usersCollection.findOne(query);
@@ -39,7 +40,7 @@ route.post('/users', async (req, res) => {
 });        
 
 //api to add verified field to user
-route.put('/users/verify/:id', verifyJWT, async (req, res) => {
+route.put('/verify/:id', verifyJWT, async (req, res) => {
     const id = req.params.id;
     const query = { _id: ObjectId(id) };
     const options = { upsert: true };

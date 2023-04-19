@@ -14,6 +14,9 @@ app.use(express.json());
 const verifyJWT = require('./middleswares/verifyJWT');
 const verifySeller = require('./middleswares/verifySeller');
 
+//import api routes
+const users = require('./routes/users'); 
+
 // //JWT middleware to verify jwt  
 // function verifyJWT(req, res, next) {
 //     const authHeader = req.headers.authorization;
@@ -118,6 +121,8 @@ async function run() {
         /*
         ----------------- USER API ----------------------
         */
+
+        app.use('/users',users);
 
         // //api to get all user
         // app.get('/users', async (req, res) => {
